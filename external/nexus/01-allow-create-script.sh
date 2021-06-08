@@ -8,4 +8,6 @@ podman exec ${CONTAINER_ID} /bin/sh  -c "echo nexus.scripts.allowCreation=true >
 
 podman stop ${CONTAINER_ID}
 
+sleep 5
+
 ${my_dir}/00-run.sh
