@@ -15,14 +15,3 @@ eval "${token_cmd} ${my_dir}/${resource}/jenkins-maven-slave-pvc.yaml" | oc -n $
 
 eval "${token_cmd} ${my_dir}/${resource}/jenkins-persistent.yaml" | oc -n ${namespace} apply -f -
 
-i=0
-while true 
-do
-    result=$(oc -n ${namespace} get dc jenkins -o template='{{.status.availableReplicas}}')
-    if [ ${result} -eq 1 ]; then 
-        break
-    fi
-    ((i++))
-    echo 'Waiting for jenkins is ready ...' ${i}
-    sleep 1
-done
