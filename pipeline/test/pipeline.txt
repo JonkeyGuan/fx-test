@@ -124,11 +124,11 @@ pipeline {
       }
     }
 
-    stage('Copy Image to Nexus Container Registry') {
+    stage('Copy Image to Container Registry') {
       steps {
-        echo "Copy image to Nexus Container Registry"
+        echo "Copy image to Container Registry"
         script {
-          sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds admin:\$(oc whoami -t) --dest-creds admin:1d696e57-728e-466f-a2ff-8c9441557f4c docker://image-registry.openshift-image-registry.svc.cluster.local:5000/${devProject}/tasks:${devTag} docker://nexus-registry.${prefix}-nexus.svc.cluster.local:5000/tasks:${devTag}"
+          sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds admin:\$(oc whoami -t) --dest-creds cicd+robot:UIJ3WBNTM75J8F90JWI9RERPHPJHK8681Y6YOTFTE8C58A65GDDA61R1PDJTEKF0 docker://image-registry.openshift-image-registry.svc.cluster.local:5000/${devProject}/tasks:${devTag} docker://quay-registry01-quay-quay01.apps.90ocp.example.com/cicd/tasks:${devTag}"
 
           openshift.withCluster() {
             openshift.withProject("${prodProject}") {
