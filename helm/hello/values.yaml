@@ -1,0 +1,21 @@
+replicaCount: 1
+
+image:
+  repository: quay-registry01-quay-quay01.apps.90ocp.example.com/cicd/hello
+  tag: latest
+  pullSecret: regsecret
+  pullPolicy: IfNotPresent
+   
+service:
+  name: hello-service
+  port: 8080
+
+route:
+
+resources: {}
+  # limits:
+  #  cpu: 100m
+  #  memory: 128Mi
+  # requests:
+  #  cpu: 100m
+  #  memory: 128Mi

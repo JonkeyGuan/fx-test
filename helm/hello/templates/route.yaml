@@ -1,0 +1,16 @@
+{{- $serviceName := include "fullname" . -}}
+{{- $servicePort := .Values.service.port -}}
+apiVersion: v1
+kind: Route
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+spec:
+  port:
+    targetPort: {{ $servicePort }}
+  to:
+    kind: Service
+    name: {{ $serviceName }}
+    weight: 100
