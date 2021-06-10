@@ -1,6 +1,6 @@
 {{- $serviceName := include "fullname" . -}}
 {{- $servicePort := .Values.service.port -}}
-apiVersion: v1
+apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
   name: {{ template "fullname" . }}
