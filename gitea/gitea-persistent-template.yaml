@@ -299,6 +299,8 @@ objects:
       FILE_EXTENSIONS = .adoc,.asciidoc
       RENDER_COMMAND = "asciidoc --out-file=- -"
       IS_INPUT_FILE = false
+      [webhook]
+      SKIP_TLS_VERIFY=true
 parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
