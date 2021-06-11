@@ -9,7 +9,7 @@ def activeApp   = ""
 
 pipeline {
   agent {
-    label "maven-with-nexus"
+    label "slave"
   }
 
   stages {

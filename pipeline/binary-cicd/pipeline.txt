@@ -34,11 +34,27 @@ pipeline {
       }
     }
 
-    stage('Copy Image to Container Registry') {
+    stage('Deploy to Environment') {
       steps {
-        echo "Copy image to Container Registry"
+        echo "Deploying container image to environment"
         script {
-          sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds admin:\$(oc whoami -t) --dest-creds ${destCreds} docker://${inRegistry}/${project}/${appName}:${tag} docker://${exRegistry}/${appName}:${tag}"
+          openshift.withCluster() {
+            openshift.withProject("${project}") {
+              openshift.set("image", "dc/${appName}", "${appName}=image-registry.openshift-image-registry.svc:5000/${project}/${appName}:${tag}")
+              openshift.selector("dc", "${appName}").rollout().latest();
+
+              sleep 5
+              def dc = openshift.selector("dc", "${appName}").object()
+              def dcVersion = dc.status.latestVersion
+              def rc = openshift.selector("rc", "${appName}-${dcVersion}").object()
+
+              echo "Waiting for ReplicationController \"${appName}-${dcVersion}\" to be ready"
+              while (rc.spec.replicas != rc.status.readyReplicas) {
+                sleep 5
+                rc = openshift.selector("rc", "${appName}-${dcVersion}").object()
+              }
+            }
+          }
         }
       }
     }
