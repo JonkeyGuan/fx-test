@@ -1,0 +1,56 @@
+def appName    = "hello-spring-boot"
+def tag        = "0.0-0"
+def project    = "test-java"
+def inRegistry = "image-registry.openshift-image-registry.svc.cluster.local:5000"
+def exRegistry = "quay-registry01-quay-quay01.apps.90ocp.example.com/cicd"
+def gitUrl     = "http://gitea-cicd-tools.apps.90ocp.example.com/gitea/hello-spring-boot.git"
+def destCreds  = "cicd+robot:UIJ3WBNTM75J8F90JWI9RERPHPJHK8681Y6YOTFTE8C58A65GDDA61R1PDJTEKF0"
+def mvnCmd      = "mvn -s ./nexus_openshift_settings.xml"
+
+pipeline {
+  agent {
+    label "slave"
+  }
+
+  stages {
+    stage('Checkout Source') {
+      steps {
+        git credentialsId: 'gitea', url: "${gitUrl}"
+        script {
+          tag  = currentBuild.number
+        }
+      }
+    }
+
+    stage('Build Jar File') {
+      steps {
+        echo "Building version ${tag}"
+        sh "${mvnCmd} clean package -DskipTests=true"
+      }
+    }
+
+    stage('Build and Tag OpenShift Image') {
+      steps {
+          echo "Building OpenShift container image ${appName}:${tag}"
+          script {
+            openshift.withCluster() {
+              openshift.withProject("${project}") {
+                openshift.selector("bc", "${appName}").startBuild("--from-file=./target/hello-spring-boot-0.0.1-SNAPSHOT.jar", "--wait=true")
+                openshift.tag("${appName}:latest", "${appName}:${tag}")
+              }
+            }
+          }
+      }
+    }
+
+    stage('Copy Image to Container Registry') {
+      steps {
+        echo "Copy image to Container Registry"
+        script {
+          sh "skopeo copy --src-tls-verify=false --dest-tls-verify=false --src-creds admin:\$(oc whoami -t) --dest-creds ${destCreds} docker://${inRegistry}/${project}/${appName}:${tag} docker://${exRegistry}/${appName}:${tag}"
+        }
+      }
+    }
+
+  }
+}
