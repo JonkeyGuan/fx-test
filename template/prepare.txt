@@ -1,0 +1,24 @@
+
+htpasswd -b -c /root/htpasswd admin admin
+htpasswd -b /root/htpasswd user1 redhat
+htpasswd -b /root/htpasswd user2 redhat
+
+oc delete secret htpass-secret -n openshift-config
+oc create secret generic htpass-secret --from-file=htpasswd=/root/htpasswd -n openshift-config
+
+user1 login
+
+oc new-project user1-appstore-test
+oc apply -f gitea-persistent-template.yaml
+
+oc policy add-role-to-user view user2 -n user1-appstore-test
+
+user2 login
+
+oc project user1-appstore-test
+oc get template -n user1-appstore-test
+oc apply -f gitea-persistent-template.yaml
+
+---
+#An error occurred
+#templates.template.openshift.io is forbidden: User "user2" cannot create resource "templates" in API group "template.openshift.io" in the namespace "user1-appstore-test

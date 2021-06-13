@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: hello-world-frontend
+spec:
+  hosts:
+    - hello-world-frontend.apps.90ocp.example.com
+  gateways:
+  - hello-world-frontend-gateway
+  http:
+  - route:
+    - destination:
+        host: hello-world-frontend
+        port:
+          number: 8080
