@@ -29,6 +29,21 @@ pipeline {
       }
     }
 
+    stage('Unit Tests') {
+      steps {
+        echo "Running Unit Tests"
+        sh "${mvnCmd} test"
+        step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+      }
+    }
+
+    stage('Code Analysis') {
+      steps {
+        echo "Running Code Analysis"
+        sh "${mvnCmd} sonar:sonar -Dsonar.host.url=http://sonarqube-cicd-tools.apps.90ocp.example.com/ -Dsonar.projectName=${JOB_BASE_NAME} -Dsonar.projectVersion=${tag}"
+      }
+    }
+
     stage('Build and Tag OpenShift Image') {
       steps {
           echo "Building OpenShift container image ${appName}:${tag}"
