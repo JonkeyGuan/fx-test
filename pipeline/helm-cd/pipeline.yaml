@@ -18,7 +18,7 @@ spec:
     - name: image-scan
       params:
         - name: image
-          value: $(params.image_repo):$(params.image_tag)"
+          value: $(params.image_repo):$(params.image_tag)
         - name: rox_api_token
           value: roxsecrets
         - name: rox_central_endpoint
