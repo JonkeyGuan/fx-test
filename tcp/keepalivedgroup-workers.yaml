@@ -1,0 +1,19 @@
+apiVersion: redhatcop.redhat.io/v1alpha1
+kind: KeepalivedGroup
+metadata:
+  name: keepalivedgroup-workers
+  namespace: keepalived-operator
+spec:
+  blacklistRouterIDs:
+    - 1
+    - 11
+    - 12
+    - 13
+    - 21
+    - 22
+    - 23
+    - 100
+  image: helper.90ocp.example.com:5000/openshift4/ose-keepalived-ipfailover
+  interface: enp1s0
+  nodeSelector:
+    node-role.kubernetes.io/loadbalancer: ''

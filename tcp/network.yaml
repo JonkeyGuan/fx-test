@@ -1,0 +1,17 @@
+apiVersion: config.openshift.io/v1
+kind: Network
+metadata:
+  name: cluster
+spec:
+  clusterNetwork:
+    - cidr: 10.254.0.0/16
+      hostPrefix: 24
+  externalIP:
+    autoAssignCIDRs:
+    - 90.0.0.0/24
+    policy:
+      allowedCIDRs:
+      - 90.0.0.0/24
+  networkType: OpenShiftSDN
+  serviceNetwork:
+    - 172.30.0.0/16
