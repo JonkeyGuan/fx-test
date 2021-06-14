@@ -1,0 +1,31 @@
+apiVersion: triggers.tekton.dev/v1alpha1
+kind: TriggerTemplate
+metadata:
+  name: image-change
+spec:
+  params:
+    - default: 'updated image name'
+      name: IMAGE_NAME
+    - default: 'updated image tag'
+      name: IMAGE_TAG
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: PipelineRun
+      metadata:
+        generateName: image-change-
+      spec:
+        params:
+          - name: image_repo
+            value: $(tt.params.IMAGE_NAME)
+          - name: image_tag
+            value: $(tt.params.IMAGE_TAG)
+          - name: git_url
+            value: "http://gitea-cicd-tools.apps.90ocp.example.com/gitea/yaml-cd.git"
+          - name: git_branch
+            value: "master"
+        pipelineRef:
+          name: image-change
+        serviceAccountName: gitea
+        workspaces:
+          - name: source
+            emptyDir: {}

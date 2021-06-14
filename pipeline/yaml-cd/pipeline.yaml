@@ -1,0 +1,56 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: image-change
+spec:
+  workspaces:
+    - name: source
+  params:
+    - name: git_url
+      type: string
+    - name: git_branch
+      type: string
+    - name: image_repo
+      type: string
+    - name: image_tag
+      type: string
+  tasks:
+    - name: image-scan
+      params:
+        - name: image
+          value: $(params.image_repo):$(params.image_tag)
+        - name: rox_api_token
+          value: roxsecrets
+        - name: rox_central_endpoint
+          value: roxsecrets
+        - name: output_format
+          value: pretty
+      taskRef:
+        kind: Task
+        name: rox-image-scan
+    - name: apply-image-change
+      params:
+        - name: GIT_USER_NAME
+          value: gitea
+        - name: GIT_USER_EMAIL
+          value: gitea@gitea.com
+        - name: GIT_SCRIPT
+          value: |
+            git clone $(params.git_url)
+            cd yaml-cd
+            git checkout $(params.git_branch)
+            new_image="image: $(params.image_repo):$(params.image_tag)"
+            sed -i "s|image:.*$|$new_image|" overlays/development/deployment-patches.yaml
+            cat overlays/development/deployment-patches.yaml
+            git add .
+            git commit -m "updated to new tag"
+            git status 
+            git push 
+      runAfter:
+        - image-scan
+      taskRef:
+        kind: Task
+        name: apply-image-change
+      workspaces:
+        - name: source
+          workspace: source

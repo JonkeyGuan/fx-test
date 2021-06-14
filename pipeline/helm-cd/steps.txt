@@ -1,0 +1,6 @@
+
+podman pull docker.io/alpine/git:v2.30.2
+
+podman tag docker.io/alpine/git:v2.30.2 quay-registry01-quay-quay01.apps.90ocp.example.com/cicd/git:v2.30.2
+
+podman push quay-registry01-quay-quay01.apps.90ocp.example.com/cicd/git:v2.30.2
