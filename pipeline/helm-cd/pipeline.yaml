@@ -39,7 +39,7 @@ spec:
             git clone $(params.git_url)
             cd helm-cd
             git checkout $(params.git_branch)
-            sed -i "s|repository:.*$|tag: $(params.image_repo)|" subchart/values.yaml
+            sed -i "s|repository:.*$|repository: $(params.image_repo)|" subchart/values.yaml
             sed -i "s|tag:.*$|tag: $(params.image_tag)|" subchart/values.yaml
             cat subchart/values.yaml
             git add .
