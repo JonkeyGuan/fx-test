@@ -1,0 +1,26 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: kibana
+  namespace: elastic-system
+spec:
+  count: 1
+  elasticsearchRef:
+    name: elasticsearch
+  http:
+    service:
+      metadata:
+        annotations:
+          service.beta.openshift.io/serving-cert-secret-name: kibana-openshift-tls
+        creationTimestamp: null
+      spec: {}
+    tls:
+      certificate:
+        secretName: kibana-openshift-tls
+  image: 'helper.90ocp.example.com:5000/kibana/kibana-ubi8:7.12.1'
+  podTemplate:
+    metadata:
+      creationTimestamp: null
+    spec:
+      containers: null
+  version: 7.12.1

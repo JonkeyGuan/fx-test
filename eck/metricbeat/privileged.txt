@@ -1,0 +1,2 @@
+
+oc adm policy add-scc-to-user -z metricbeat -n elastic-system privileged

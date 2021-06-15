@@ -1,0 +1,48 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: elasticsearch
+  namespace: elastic-system
+spec:
+  auth: {}
+  http:
+    service:
+      metadata:
+        creationTimestamp: null
+      spec: {}
+    tls:
+      certificate: {}
+  image: 'helper.90ocp.example.com:5000/elasticsearch/elasticsearch-ubi8:7.12.1'
+  nodeSets:
+    - config:
+        node.roles:
+          - master
+          - data
+          - ingest
+        node.store.allow_mmap: false
+      count: 3
+      name: default
+      podTemplate:
+        metadata:
+          creationTimestamp: null
+        spec:
+          containers:
+            - name: elasticsearch
+              resources:
+                limits:
+                  cpu: '2'
+                  memory: 4Gi
+                requests:
+                  cpu: '1'
+                  memory: 4Gi
+  transport:
+    service:
+      metadata:
+        creationTimestamp: null
+      spec: {}
+    tls:
+      certificate: {}
+  updateStrategy:
+    changeBudget: {}
+  version: 7.12.1
+
