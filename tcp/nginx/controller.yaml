@@ -1,0 +1,15 @@
+apiVersion: k8s.nginx.org/v1alpha1
+kind: NginxIngressController
+metadata:
+  name: nginx-ingress-controller
+  namespace: nginx-ingress-operator
+spec:
+  ingressClass: nginx
+  serviceType: LoadBalancer
+  globalConfiguration: nginx-ingress-operator/nginx-configuration
+  nginxPlus: false
+  type: deployment
+  image:
+    pullPolicy: Always
+    repository: helper.90ocp.example.com:5000/nginx/nginx-ingress
+    tag: latest
